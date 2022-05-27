@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="resources/css/mainPage.css">
+    <title>TECBank web</title>
+</head>
+<body>
+    <div class="header">
+        <a href="#default" class="logo">
+            TECBank Web
+        </a>
+        <div class="header-right">
+          <a class="active" href="/mainpage">Home</a>
+          <a href="#">Citas</a>
+          <a href="#">Iniciar un plan de ahorros</a>
+          <a href="transferencias">Transferencias</a>
+          <a href="internet">Internet</a>
+          <a href="educativas">Instituciones educativas</a>
+          <a href="mainpaget">Tipo de cambio</a>
+        </div>
+      </div>
+      <script src= "//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+      <% if(typeof alert != "undefined") { %>
+          <script>
+              Swal.fire({
+                  title: '<%= alertTitle %>',
+                  text: '<%- alertMessage %>',
+                  icon: '<%= alertIcon %>',
+                  showConfirmButton: <%= showConfirmButton %>,
+                  timer: <%= timer %>
+              });
+          </script>
+      <% } %>
+      <script>
+          var accs = <%- (some) %>;
+          var div = document.createElement('div');
+          div.style = "align-items: center;"
+          document.getElementsByTagName('body')[0].appendChild(div);
+          var i = 0;
+          while(accs[i] != undefined){
+            var onediv = document.createElement('div');
+            onediv.style  = "float: left; margin: 100px; margin-bottom: 20px;background: #d1180a;padding: 15px; color: white; border-radius: 5px; width: 1100px;";
+            div.appendChild(onediv);
+            var h2 = document.createElement('h2');
+            h2.textContent = "Iban: " + accs[i].iban;
+            var h3 = document.createElement('h3');
+            h3.textContent = "Balance: " + accs[i].balance;
+            onediv.appendChild(h2);
+            onediv.appendChild(h3);
+            i++;
+          }
+      </script> 
+      
+</body>
+</html>
