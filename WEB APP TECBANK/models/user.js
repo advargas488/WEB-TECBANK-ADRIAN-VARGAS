@@ -62,6 +62,21 @@ class User{
     getEmail(){
         return this.email;
     }
+
+    getDates(){
+        return new Promise((resolve, reject) => {
+            db.query('SELECT * FROM cita WHERE idUser = ?', [this.id], function (err, result, fields) {
+                if(err) reject(err);
+                resolve(result);
+            });
+        }).then((result) => {
+            return result;
+        });
+    }
+
+    getId(){
+        return this.id;
+    }
 }
 
 

@@ -22,6 +22,16 @@ class Account{
             }
         });
     }
+    async getMonto(iban){
+        return new Promise((resolve, reject) => {
+            db.query('SELECT balance FROM account WHERE iban = ?', [iban], function (err, result) {
+                if(err) reject(err);
+                resolve(result);
+            });
+        }).then((result) => {
+            return result;
+        });
+    }
 }
 
 module.exports = Account;

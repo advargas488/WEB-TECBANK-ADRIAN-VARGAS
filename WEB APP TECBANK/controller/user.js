@@ -21,6 +21,14 @@ class UserController{
     getEmail(){
         return this.user_.getEmail();
     }
+
+    async getDates(){
+        return await this.user_.getDates();
+    }
+
+    getId(){
+        return this.user_.getId();
+    }
 }
 
 module.exports = UserController;

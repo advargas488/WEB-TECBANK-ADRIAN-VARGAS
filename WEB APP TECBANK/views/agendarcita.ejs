@@ -24,9 +24,16 @@
       </div>
 
       <div class="enviartoken">
-        <form action="recibirTokenInter" method="POST">
-            <label for="token">Ingrese el token:</label><br>
-            <input type="text" name="token" id="token" required><br>
+        <form action="agendarcita" method="POST">
+            <label for="motivo">Ingrese el motivo:</label><br>
+            <select name="motivo" id="motivo" required>
+                <option value="Firma digital">Firma digital</option>
+                <option value="Reserva de espacio">Reserva de espacio</option>
+                <option value="renovacion licencia">Renovación licencia</option>
+                <option value="renovacion pasaporte">Renovación pasaporte</option>
+            </select><br>
+            <label for="fecha">Ingrese la fecha:</label><br>
+            <input type="datetime-local" name="fecha" id="fecha" required><br>
             <input type="submit" value="Confirmar"><br>
         </form>
     </div>

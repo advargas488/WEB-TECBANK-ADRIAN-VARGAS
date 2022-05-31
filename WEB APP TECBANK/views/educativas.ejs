@@ -24,9 +24,22 @@
       </div>
 
       <div class="enviartoken">
-        <form action="recibirTokenInter" method="POST">
-            <label for="token">Ingrese el token:</label><br>
-            <input type="text" name="token" id="token" required><br>
+        <form action="educativas" method="POST">
+            <label for="institucion">Ingrese la institución:</label><br>
+            <select name="institucion" id="institucion" required>
+                <option value="ucr">Universidad de Costa Rica</option>
+                <option value="tec">Tecnológico de Costa Rica</option>
+            </select><br>
+            <label for="servicio">Ingrese el servicio a pagar:</label><br>
+            <select name="servicio" id="servicio" required>
+                <option value="matri">Pago de matrícula</option>
+                <option value="admin">Examen de admisión</option>
+                <option value="grad">Graduación</option>
+            </select><br>
+            <label for="carne">Ingrese el carne del estudiante:</label><br>
+            <input type="number" name="contrato" id="contrato" required><br>
+            <label for="cuentadebitar">Ingrese la cuenta a debitar:</label><br>
+            <input type="text" name="cuentadebitar" id="cuentadebitar" required><br>
             <input type="submit" value="Confirmar"><br>
         </form>
     </div>

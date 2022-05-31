@@ -9,6 +9,7 @@ const TokenGenerator = require( 'token-generator' )({
 });
 
 let accounts = null;
+let citas = null;
 let currtrans = null;
 let currtoken = null;
 
@@ -38,10 +39,16 @@ app.use(session({
 const connection = require('./database/db');
 const UserController = require('./controller/user');
 const AccountController = require('./controller/account');
-const { response } = require('express');
+const PagoController = require('./controller/pago');
+const PlanAhorro = require('./controller/planAhorro');
+const CitaController = require('./controller/citas');
+const { response, json } = require('express');
 
 const userController = new UserController();
 const accountController = new AccountController();
+const pagoController = new PagoController();
+const planAhorroController = new PlanAhorro();
+const citaController = new CitaController();
 app.get('/login', (req, res) => {
     res.render('index');
 });
@@ -75,6 +82,8 @@ app.post('/register', async (req, res) => {
 app.get('/mainpage', async (req, res) => {
     accounts = await userController.getAccounts();
     accounts = JSON.stringify(accounts);
+    citas = await userController.getDates();
+    citas = JSON.stringify(citas);
     res.render('mainPage', {
         some: accounts
     });
@@ -210,6 +219,128 @@ app.post('/recibirTokenInter', async (req, res) => {
             ruta: 'token'
             });
     }
+});
+
+app.get('/internet', (req, res) => {
+    res.render('internet');
+});
+
+app.post('/internet', async (req, res) => {
+    await pagoController.realizarPago(req.body.cuentadebitar);
+    res.render('mainpage',{
+        some: accounts,
+        alert: true,
+        alertTitle: "¡Exito!",
+        alertMessage: "¡Pago de internet exitoso!",
+        alertIcon: "success",
+        showConfirmButton: true,
+        timer: false,
+        ruta: 'mainpage'
+    });
+});
+
+app.get('/educativas', (req, res) =>{
+    res.render('educativas');
+});
+
+app.post('/educativas', async (req, res) =>{
+    await pagoController.realizarPago(req.body.cuentadebitar);
+    res.render('mainpage',{
+        some: accounts,
+        alert: true,
+        alertTitle: "¡Exito!",
+        alertMessage: "¡Pago de servicio educativo exitoso!",
+        alertIcon: "success",
+        showConfirmButton: true,
+        timer: false,
+        ruta: 'mainpage'
+    });
+});
+
+app.get('/planahorro', (req, res) => {
+    res.render('planahorro');
+});
+
+app.post('/planahorro' , async (req, res) =>{
+    let monto = await accountController.getAccMonto(req.body.cuentadebitar);
+    if(req.body.montoinicial < 500000){
+        res.render('planahorro',{
+            some: accounts,
+            alert: true,
+            alertTitle: "¡Error!",
+            alertMessage: "¡El monto minimo debe ser de más de 500 000 colones!",
+            alertIcon: "error",
+            showConfirmButton: true,
+            timer: false,
+            ruta: 'planahorro'
+        });
+    }
+    else if(monto[0].balance < req.body.montoinicial){
+        res.render('planahorro',{
+            alert: true,
+            alertTitle: "¡Error!",
+            alertMessage: "¡No cuenta con suficientes fondos!",
+            alertIcon: "error",
+            showConfirmButton: true,
+            timer: false,
+            ruta: 'planahorro'
+        });
+        return;
+    }
+    else{
+        let montofinal = await planAhorroController.iniciarPlanAhorro(
+            parseInt(req.body.plazo), 
+            req.body.cuentadebitar, 
+            req.body.nombre,
+            req.body.montoinicial
+            );
+
+        res.render('mainpage',{
+            some: accounts,
+            alert: true,
+            alertTitle: "Monto final esperado: ",
+            alertMessage: montofinal,
+            alertIcon: "success",
+            showConfirmButton: true,
+            timer: false,
+            ruta: 'mainpage'
+        });
+    }
+});
+
+app.get('/citas' , async (req, res) => {
+    citas = await userController.getDates();
+    citas = JSON.stringify(citas);
+    res.render('citas', {
+        some: citas
+    });
+});
+
+app.get('/agendarcita', (req, res) => {
+    res.render('agendarcita');
+});
+
+app.post('/agendarcita', async (req, res) => {
+    await citaController.agendarCita(userController.getId(), req.body.fecha, req.body.motivo);
+    res.redirect('citas');
+});
+
+app.get('/cancelarcita', (req, res) => {
+    res.render('cancelarcita');
+});
+
+app.post('/cancelarcita', async (req,  res) => {
+    await citaController.cancelarCita(req.body.id);
+    res.redirect('citas');
+});
+
+app.get('/reagendarcita', (req, res) => {
+    res.render('reagendarcita');
+});
+
+app.post('/reagendarcita' , async (req, res) => {
+    await citaController.reagendarCita(req.body.id, req.body.fecha);
+    res.redirect('citas');
 });
 
 app.listen(3000, (req, res) => {

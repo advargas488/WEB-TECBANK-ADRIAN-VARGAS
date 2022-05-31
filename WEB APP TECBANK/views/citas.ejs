@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="resources/css/mainPage.css">
+    <link rel="stylesheet" href="resources/css/citas.css">
     <title>TECBank web</title>
 </head>
 <body>
@@ -22,6 +22,24 @@
           <a href="mainpaget">Tipo de cambio</a>
         </div>
       </div>
+
+      <div class="options">
+        <a href="cancelarcita">
+            <button>
+                Cancelar una cita
+            </button>
+        </a>
+        <a href="reagendarcita">
+            <button>
+                Modificar fecha y hora de una cita
+            </button>
+        </a>
+        <a href="agendarcita">
+            <button>
+                Agendar una cita
+            </button>
+        </a>
+      </div>
       <script src= "//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
       <% if(typeof alert != "undefined") { %>
           <script>
@@ -35,21 +53,22 @@
           </script>
       <% } %>
       <script>
-          var accs = <%- (some) %>;
+          var citas = <%- (some) %>;
           var div = document.createElement('div');
           div.style = "align-items: center;"
           document.getElementsByTagName('body')[0].appendChild(div);
           var i = 0;
-          while(accs[i] != undefined){
+          while(citas[i] != undefined){
+            console.log(citas[1]);
             var onediv = document.createElement('div');
-            onediv.style  = "float: left; margin: 100px; margin-bottom: 20px;background: #d1180a;padding: 15px; color: white; border-radius: 5px; width: 1100px;";
+            onediv.style  = "float: left; margin: 100px; margin-bottom: 20px;background: #d1180a;padding: 15px; color: white; border-radius: 5px; width: 500px;";
             div.appendChild(onediv);
             var h2 = document.createElement('h2');
-            h2.textContent = "Iban: " + accs[i].iban;
-            var h3 = document.createElement('h3');
-            h3.textContent = "Balance: " + accs[i].balance;
+            h2.textContent = "Identificador: " + citas[i].id;
+            var h31 = document.createElement('h3');
+            h31.textContent = "Fecha: " + citas[i].date;
             onediv.appendChild(h2);
-            onediv.appendChild(h3);
+            onediv.appendChild(h31);
             i++;
           }
       </script> 

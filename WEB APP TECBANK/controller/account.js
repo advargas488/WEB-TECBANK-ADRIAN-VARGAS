@@ -13,6 +13,10 @@ class AccountController{
     async transInter(monto, cuentaorigen, compra){
         await this.account.transferenciaInterbancaria(monto, cuentaorigen, compra);
     }
+
+    async getAccMonto(iban){
+        return await this.account.getMonto(iban);
+    }
 }
 
 module.exports = AccountController;

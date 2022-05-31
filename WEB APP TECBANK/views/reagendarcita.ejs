@@ -24,17 +24,25 @@
       </div>
 
       <div class="enviartoken">
-        <form action="enviartokenIntra" method="POST">
-            <label for="cuentaorigen">Cuenta origen:</label><br>
-            <input type="text" name="cuentaorigen" id="cuentaorigen" required><br>
-            <label for="cuentadestino">Cuenta destino:</label><br>
-            <input type="text" name="cuentadestino" id="cuentadestino" required><br>
-            <label for="detalle">Detalle:</label><br>
-            <input type="text" name="detalle" id="detalle" required><br>
-            <label for="monto">Monto:</label><br>
-            <input type="number" name="monto" id="monto" required><br>
-            <input type="submit" value="Enviar"><br>
+        <form action="reagendarcita" method="POST">
+            <label for="id">Ingrese el identificador de la cita:</label><br>
+            <input type="number" name="id" id="id" required><br>
+            <label for="fecha">Ingrese la fecha:</label><br>
+            <input type="datetime-local" name="fecha" id="fecha" required><br>
+            <input type="submit" value="Confirmar"><br>
         </form>
     </div>
+    <script src= "//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <% if(typeof alert != "undefined") { %>
+        <script>
+            Swal.fire({
+                title: '<%= alertTitle %>',
+                text: '<%= alertMessage %>',
+                icon: '<%= alertIcon %>',
+                showConfirmButton: <%= showConfirmButton %>,
+                timer: <%= timer %>
+            });
+        </script>
+    <% } %>
 </body>
 </html>

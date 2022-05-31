@@ -22,12 +22,23 @@
           <a href="mainpaget">Tipo de cambio</a>
         </div>
       </div>
-
+      
       <div class="enviartoken">
-        <form action="recibirTokenInter" method="POST">
-            <label for="token">Ingrese el token:</label><br>
-            <input type="text" name="token" id="token" required><br>
-            <input type="submit" value="Confirmar"><br>
+        <form action="planahorro" method="POST">
+            <label for="plazo">Seleccione el plazo en años:</label><br>
+            <select type="number" name="plazo" id="plazo" required>
+                <option value="1">Corto (1 año) </option>
+                <option value="3">Largo (3 años)</option>
+                <option value="5">Largo (5 años)</option>
+                <option value="10">Largo (10 años)</option>
+            </select><br>
+            <label for="nombre">Ingrese el nombre del plan:</label><br>
+            <input type="text" name="nombre" id="nombre" required><br>
+            <label for="montoinicial">Ingrese el monto inicial:</label><br>
+            <input type="number" name="montoinicial" id="montoinicial" required><br>
+            <label for="cuentadebitar">Ingrese la cuenta a debitar:</label><br>
+            <input type="text" name="cuentadebitar" id="cuentadebitar" required><br>
+            <input type="submit" value="Iniciar plan"><br>
         </form>
     </div>
     <script src= "//cdn.jsdelivr.net/npm/sweetalert2@10"></script>

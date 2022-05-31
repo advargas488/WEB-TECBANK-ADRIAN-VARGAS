@@ -24,9 +24,17 @@
       </div>
 
       <div class="enviartoken">
-        <form action="recibirTokenInter" method="POST">
-            <label for="token">Ingrese el token:</label><br>
-            <input type="text" name="token" id="token" required><br>
+        <form action="internet" method="POST">
+            <label for="proveedor">Ingrese el proveedor:</label><br>
+            <select name="proveedor" id="proveedor" required>
+                <option value="tigo">Tigo</option>
+                <option value="kolbi">Kolbi</option>
+                <option value="cabletica">CableTica</option>
+            </select><br>
+            <label for="contrato">Ingrese el numero de contrato:</label><br>
+            <input type="text" name="contrato" id="contrato" required><br>
+            <label for="cuentadebitar">Ingrese la cuenta a debitar:</label><br>
+            <input type="text" name="cuentadebitar" id="cuentadebitar" required><br>
             <input type="submit" value="Confirmar"><br>
         </form>
     </div>
