@@ -1,58 +1,50 @@
 const express = require('express');
 const app = express();
-
+//para mandar el email
 const sendEmail = require('./utils/nodemailer');
-
+//genera tokens
 const TokenGenerator = require( 'token-generator' )({
     salt: 'your secret ingredient for this magic recipe',
     timestampMap: 'abcdefghij', // 10 chars array for obfuscation proposes
 });
-
-let accounts = null;
-let citas = null;
-let currtrans = null;
-let currtoken = null;
-
+let accounts = null;//cuentas de usuario
+let citas = null;//citas de usuario
+let currtrans = null;//para guardar la trans y pedir el token
+let currtoken = null;//para saber si el token enviado calza con el que se ingresa
 app.use(express.urlencoded({extended:false}));
 app.use(express.json());
-
 const dotenv = require('dotenv');
-
+//para obtener el tipo de cambio (mediante npm)
 const indicadoresEconomicosBCCR = require('indicadores-economicos-bccr');
-
 dotenv.config({path:'./env/.env'});
-
 app.use('/resources', express.static('public'));
 app.use('/resources', express.static( __dirname + '/public'));
-
 app.set('view engine', 'ejs');
-
 const bcryptjs = require('bcryptjs');
-
 const session = require('express-session');
 app.use(session({
     secret:'secret',
     resave: true,
     saveUninitialized: true
 }));
-
-const connection = require('./database/db');
+const connection = require('./database/db');//bd
+//controller classes
 const UserController = require('./controller/user');
 const AccountController = require('./controller/account');
 const PagoController = require('./controller/pago');
 const PlanAhorro = require('./controller/planAhorro');
 const CitaController = require('./controller/citas');
 const { response, json } = require('express');
-
+//controllers
 const userController = new UserController();
 const accountController = new AccountController();
 const pagoController = new PagoController();
 const planAhorroController = new PlanAhorro();
 const citaController = new CitaController();
+//routes
 app.get('/login', (req, res) => {
     res.render('index');
 });
-
 app.post('/login', async (req, res) => {
     if(!await userController.login(req.body.user, req.body.pass)){
         res.render('index', {
@@ -69,16 +61,13 @@ app.post('/login', async (req, res) => {
         res.redirect('/mainpage');
     }
 });
-
 app.get('/register', (req, res) => {
     res.render('register');
 });
-
 app.post('/register', async (req, res) => {
     await userController.register(req.body.name, req.body.surname, req.body.email, req.body.ced, req.body.user, req.body.pass);
     res.redirect('/login');
 });
-
 app.get('/mainpage', async (req, res) => {
     accounts = await userController.getAccounts();
     accounts = JSON.stringify(accounts);
@@ -88,11 +77,9 @@ app.get('/mainpage', async (req, res) => {
         some: accounts
     });
 });
-
 app.get('/transferencias', (req, res) => {
     res.render('transacciones');
 });
-
 app.get('/mainpaget', async (req, res) => {
     indicadoresEconomicosBCCR('adrivargas48@estudiantec.cr', 'AIESAAG5GI').then(data => {
         let compra = data.compra;
@@ -109,11 +96,9 @@ app.get('/mainpaget', async (req, res) => {
             });
     });
 });
-
 app.get('/transintra', (req, res) => {
     res.render('transIntra');
 });
-
 app.post('/enviartokenIntra', (req, res) =>{
     let cuentaorigen = req.body.cuentaorigen;
     let cuentadestino = req.body.cuentadestino;
@@ -128,11 +113,9 @@ app.post('/enviartokenIntra', (req, res) =>{
     sendEmail(email, "Token transferencia TECBank" , currtoken);
     res.redirect('/tokenIntra');
 });
-
 app.get('/tokenIntra', (req,res) =>{
     res.render('tokenIntra');
 });
-
 app.post('/recibirTokenIntra', async (req, res) => {
     if(req.body.token == currtoken){
         await accountController.transIntra(currtrans.monto, currtrans.cuentadestino, currtrans.cuentaorigen);
@@ -159,11 +142,9 @@ app.post('/recibirTokenIntra', async (req, res) => {
             });
     }
 });
-
 app.get('/transinter', (req, res) => {
     res.render('transInter');
 });
-
 app.post('/enviartokenInter', (req, res) =>{
     let cuentaorigen = req.body.cuentaorigen;
     let monto = req.body.monto
@@ -176,7 +157,6 @@ app.post('/enviartokenInter', (req, res) =>{
     sendEmail(email, "Token transferencia TECBank" , currtoken);
     res.redirect('/tokenInter');
 });
-
 app.get('/tokenInter', (req,res) =>{
     res.render('tokenInter',{
         some: accounts,
@@ -189,7 +169,6 @@ app.get('/tokenInter', (req,res) =>{
         ruta: 'tokenInter'
         });
 });
-
 app.post('/recibirTokenInter', async (req, res) => {
     if(req.body.token == currtoken){
         indicadoresEconomicosBCCR('adrivargas48@estudiantec.cr', 'AIESAAG5GI')
@@ -220,11 +199,9 @@ app.post('/recibirTokenInter', async (req, res) => {
             });
     }
 });
-
 app.get('/internet', (req, res) => {
     res.render('internet');
 });
-
 app.post('/internet', async (req, res) => {
     await pagoController.realizarPago(req.body.cuentadebitar);
     res.render('mainpage',{
@@ -238,11 +215,9 @@ app.post('/internet', async (req, res) => {
         ruta: 'mainpage'
     });
 });
-
 app.get('/educativas', (req, res) =>{
     res.render('educativas');
 });
-
 app.post('/educativas', async (req, res) =>{
     await pagoController.realizarPago(req.body.cuentadebitar);
     res.render('mainpage',{
@@ -256,11 +231,9 @@ app.post('/educativas', async (req, res) =>{
         ruta: 'mainpage'
     });
 });
-
 app.get('/planahorro', (req, res) => {
     res.render('planahorro');
 });
-
 app.post('/planahorro' , async (req, res) =>{
     let monto = await accountController.getAccMonto(req.body.cuentadebitar);
     if(req.body.montoinicial < 500000){
@@ -294,7 +267,6 @@ app.post('/planahorro' , async (req, res) =>{
             req.body.nombre,
             req.body.montoinicial
             );
-
         res.render('mainpage',{
             some: accounts,
             alert: true,
@@ -307,7 +279,6 @@ app.post('/planahorro' , async (req, res) =>{
         });
     }
 });
-
 app.get('/citas' , async (req, res) => {
     citas = await userController.getDates();
     citas = JSON.stringify(citas);
@@ -315,34 +286,27 @@ app.get('/citas' , async (req, res) => {
         some: citas
     });
 });
-
 app.get('/agendarcita', (req, res) => {
     res.render('agendarcita');
 });
-
 app.post('/agendarcita', async (req, res) => {
     await citaController.agendarCita(userController.getId(), req.body.fecha, req.body.motivo);
     res.redirect('citas');
 });
-
 app.get('/cancelarcita', (req, res) => {
     res.render('cancelarcita');
 });
-
 app.post('/cancelarcita', async (req,  res) => {
     await citaController.cancelarCita(req.body.id);
     res.redirect('citas');
 });
-
 app.get('/reagendarcita', (req, res) => {
     res.render('reagendarcita');
 });
-
 app.post('/reagendarcita' , async (req, res) => {
     await citaController.reagendarCita(req.body.id, req.body.fecha);
     res.redirect('citas');
 });
-
 app.listen(3000, (req, res) => {
     console.log("App listening on port: 3000");
 });

@@ -1,7 +1,7 @@
 const db = require('../database/db');
 
 class PlanAhorro{
-
+    //inicia el plan de ahorro y lo guarda en la bd
     iniciarPlanAhorro(tipoinversion, cuentadebitar, nombre, montoinicial){
         db.query("INSERT INTO planahorro (plazo,nombre,montoinicial) VALUES (?);", [[tipoinversion, nombre, montoinicial]], 
         function(err, result){
